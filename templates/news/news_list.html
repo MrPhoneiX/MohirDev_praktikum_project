@@ -1,0 +1,19 @@
+{% extends 'news/base.html' %}
+{% load static %}
+{% load hitcount_tags %}
+
+{% block title %} All news list {% endblock title %}
+
+{% block content %}
+
+<div class="container">
+
+    {% for news in news_list %}
+    <a href="{% url 'news_detail_page' news.pk %}">
+       <li>{{news.title }}</li>
+    </a>
+    {% endfor %}
+
+</div>
+
+{% endblock content %}

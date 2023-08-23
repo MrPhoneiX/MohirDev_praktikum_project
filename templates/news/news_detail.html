@@ -1,0 +1,62 @@
+{% extends 'news/base.html' %}
+{% load static %}
+{% load hitcount_tags %}
+
+{% block title %} {{ news.title }} {% endblock title %}
+
+{% block content %}
+
+<div class="contentSection" style="padding-left:30px; padding-right:30px; background-color: #fff;">
+    <h1>{{ news.title }}</h1>
+    <h5>
+        <span>Published date: {{ news.publish_time }} | <i class="fa fa-eye" aria-hidden="true"></i>
+            {% get_hit_count for news %} | Izohlar soni: {{ comment_count }}</span>
+    </h5>
+    <img src="{{ news.image.url }}">
+    <p>{{ news.body | linebreaks }}</p>
+
+    {% if request.user.is_authenticated and request.user.is_superuser %}
+    <div class="card-footer text-center">
+        <a href="{% url 'news_update' news.id %}">Tahrirlash</a>
+        <a href="{% url 'news_delete' news.id %}">O'chirish</a>
+    </div>
+    {% endif %} <br>
+
+    <h4>Bu yangilikga {{ comment_count }} ta izoh qoldirilgan</h4>
+
+    {% for comment in comments %}
+
+    <div class="comments" style="padding: 10px">
+        <p class="font-weight-bold">
+            {{ comment.user }}
+            <span class="text-muted font-weight-normal">
+                {{ comment.created_time }}
+            </span>
+        </p>
+        {{ comment.body | linebreaks }}
+    </div>
+
+    {% endfor %}
+
+    {% if user.is_authenticated %}
+    <div class="col-md-8 card mb-4 mt-3">
+        <div class="card-body">
+            <h3>Izoh qoldirish</h3>
+            <form method="post" style="margin-top: 1.3em">{% csrf_token%}
+            {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Yuborish
+                </button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+    <div class="card-body">
+        <p class="text-danger">Faqat ro'yhatdan o'tgan foydalanuvchi izoh qoldirishi mumkin</p>
+        <p>Izoh qoldirish uchun <a href="{% url 'user_register' %}" style="color:red">ro'yhatdan o'ting</a>
+        yoki <a href="{% url 'login' %}" style="color:red">Saytga kiring</a> </p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
